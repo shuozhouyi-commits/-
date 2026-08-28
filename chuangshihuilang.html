@@ -9033,7 +9033,7 @@
                 <div v-if="character.selectedTraits.length > 0 || customTraits.length > 0 || customExpertise.length > 0"
                     style="background:#f8f9fa; border-radius:10px; padding:12px; margin-bottom:15px;">
                     <div style="font-size:0.75rem; color:#999; font-weight:600; margin-bottom:8px;">
-                        已选特质 (正面 {{ positiveTraitCount }}/3 · 负面 {{ negativeTraitCount }}/3)
+                        已选特质 (正面 {{ positiveTraitCount }} · 负面 {{ negativeTraitCount }})
                     </div>
                     <div class="selected-traits-bar">
                         <span v-for="t in character.selectedTraits" :key="t.name"
@@ -9197,15 +9197,13 @@
 
                         <!-- 添加按钮 -->
                         <div v-if="!showTraitDraftForm" style="text-align:center; padding:10px;">
-                            <button @click="addCustomTrait" :disabled="remainingRP < 30 || positiveTraitCount >= 3"
+                            <button @click="addCustomTrait" :disabled="remainingRP < 30"
                                 style="background:linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%); color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; transition:all 0.2s;"
-                                :style="{opacity: (remainingRP < 30 || positiveTraitCount >= 3) ? 0.5 : 1, cursor: (remainingRP < 30 || positiveTraitCount >= 3) ? 'not-allowed' : 'pointer'}">
+                                :style="{opacity: (remainingRP < 30) ? 0.5 : 1, cursor: (remainingRP < 30) ? 'not-allowed' : 'pointer'}">
                                 <i class="ri-add-line"></i> {{ customTraits.length > 0 ? '再添加一个' : '创建自定义特质' }}
                             </button>
                             <div v-if="remainingRP < 30"
                                 style="font-size:0.75rem; color:var(--danger); margin-top:6px;">RP不足（需要30 RP）</div>
-                            <div v-else-if="positiveTraitCount >= 3"
-                                style="font-size:0.75rem; color:var(--danger); margin-top:6px;">正面特质已满（最多3个）</div>
                         </div>
                     </div>
 
@@ -9217,7 +9215,7 @@
                             <span style="font-weight:700; color:var(--primary);">自定义专长</span>
                             <span
                                 style="font-size:0.75rem; color:var(--danger); font-weight:600; margin-left:auto;">每个消耗
-                                -20 RP (正面 {{ positiveTraitCount }}/3)</span>
+                                -20 RP (正面 {{ positiveTraitCount }})</span>
                         </div>
 
                         <!-- 已添加的自定义专长列表 -->
@@ -9284,15 +9282,13 @@
 
                         <!-- 添加按钮 -->
                         <div v-if="!showExpertiseDraftForm" style="text-align:center; padding:10px;">
-                            <button @click="addCustomExpertise" :disabled="remainingRP < 20 || positiveTraitCount >= 3"
+                            <button @click="addCustomExpertise" :disabled="remainingRP < 20"
                                 style="background:linear-gradient(135deg, var(--accent) 0%, #40916c 100%); color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; transition:all 0.2s;"
-                                :style="{opacity: (remainingRP < 20 || positiveTraitCount >= 3) ? 0.5 : 1, cursor: (remainingRP < 20 || positiveTraitCount >= 3) ? 'not-allowed' : 'pointer'}">
+                                :style="{opacity: (remainingRP < 20) ? 0.5 : 1, cursor: (remainingRP < 20) ? 'not-allowed' : 'pointer'}">
                                 <i class="ri-add-line"></i> {{ customExpertise.length > 0 ? '再添加一个' : '创建自定义专长' }}
                             </button>
                             <div v-if="remainingRP < 20"
                                 style="font-size:0.75rem; color:var(--danger); margin-top:6px;">RP不足（需要20 RP）</div>
-                            <div v-else-if="positiveTraitCount >= 3"
-                                style="font-size:0.75rem; color:var(--danger); margin-top:6px;">正面特质已满（最多3个）</div>
                         </div>
                     </div>
                     </template><!-- /v-else normal mode traits -->
@@ -16256,9 +16252,7 @@
                     return count;
                 });
                 function isTraitDisabled(t) {
-                    if (hasTrait(t)) return false;
-                    if (t.cost >= 0 && positiveTraitCount.value >= 3) return true;
-                    if (t.cost < 0 && negativeTraitCount.value >= 3) return true;
+                    // 已移除正面/负面特质各 3 个的数量上限，只要 RP 足够即可任意选择
                     return false;
                 }
                 function toggleTrait(t) {
